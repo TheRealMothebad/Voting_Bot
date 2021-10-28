@@ -2,6 +2,7 @@
 import discord
 from discord.ext import commands  # This is the part of discord.py that helps us build bots
 from discord.ext.commands.converter import EmojiConverter
+from discord.ext.commands.core import bot_has_role
 from election import STAR
 from tok import DontStealMyToken
 
@@ -12,30 +13,28 @@ import election
 import ballot
 
 #https://discord.com/oauth2/authorize?client_id=899507257212010557&scope=bot
-
 bot = commands.Bot(command_prefix="!")
 
 @bot.event
 async def on_reaction_add(reaction, user):
     emoji = reaction.emoji
-    print(str(user) + " reacted to \"" + str(reaction.message)+ "\" with:" + str(emoji))
+    out = str(user) + " reacted to \"" + str(reaction.message.content)+ "\" with: " + str(emoji)
+    print(out)
+    if user != bot.user:
+        await reaction.message.reply(out)
 
 
 @bot.command(name="election", aliases=["e"])
-async def election(ctx, *msg): #style, *msg):
+async def elect(ctx, *msg):
     election.active = STAR(msg)
+
+@bot.command(name="register", aliases=["r"])
+async def register(ctx, *msg):
+    pass
 
 @bot.command(name="vote", aliases=["v"])
 async def vote(ctx, *msg):
-    createBallot = True
-    for i in election.active.ballots:
-        if i.voter == msg.author:
-            createBallot = False
-            break
-    if createBallot:
-        election.active.votes.update({msg.author : ballot(msg.author)})
-    for i in range(0, msg, 2):
-        election.active.votes[msg.author].update({msg[i] : msg[i+1]})
+    election.active.vote(msg)
 
 async def star_react(ctx):
     candidates = ["candiate 1", "candidate 2", "candidate 3"]
@@ -47,7 +46,7 @@ async def star_react(ctx):
 
 @bot.command(name="gencan")
 async def gen_can(ctx):
-    star_react(ctx)
+    await star_react(ctx)
     
 
 @bot.command(name="tabulate", aliases=["t", "tab", "count"])

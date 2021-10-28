@@ -4,17 +4,6 @@ class ballot:
     def __init__(self, voter) -> None:
         self.voter = voter
         self.scores = {}
-        self.tabulation = {}
-
-    @staticmethod
-    def tabulate(ballots):
-        tabulation = {}
-        for i in ballots:
-            if ballot.candidate not in tabulation:
-                tabulation.append(ballot.candidate)
-                tabulation[ballot.candidate] = 0
-            tabulation[ballot.candidate] += ballot.score
-        return dict(sorted(tabulation.items(), key=lambda x:x[1], reverse=True))
     
     @staticmethod
     def final(tab, ballots):

@@ -1,5 +1,5 @@
 class candidate:
-    def __init__(self, name, emoji, votes=0) -> None:
+    def __init__(self, name, platform, user) -> None:
         self.name = name
-        self.emoji = emoji
-        self.votes = votes
+        self.platform = platform
+        self.user = user
